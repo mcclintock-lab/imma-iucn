@@ -13,7 +13,9 @@ class OverviewTab extends ReportTab
 
     # create random data for visualization
     size = @recordSet('Size', 'Size').toArray()[0]
-
+    console.log("org size: ", size)
+    aoi_size = @addCommas Number(size.SIZE_IN_KM).toFixed(2)
+    console.log("size: ", aoi_size)
     eezs = @recordSet('Size', 'EEZs').toArray()
     isCollection = @model.isCollection()
 
@@ -24,12 +26,20 @@ class OverviewTab extends ReportTab
       attributes: @model.getAttributes()
       admin: @project.isAdmin window.user
       isCollection: isCollection
-      size: size
-      connectivity: connectivity
+      size: aoi_size
+      eezs: eezs
     
     @$el.html @template.render(context, templates)
 
 
-
+  addCommas: (num_str) =>
+    num_str += ''
+    x = num_str.split('.')
+    x1 = x[0]
+    x2 = if x.length > 1 then '.' + x[1] else ''
+    rgx = /(\d+)(\d{3})/
+    while rgx.test(x1)
+      x1 = x1.replace(rgx, '$1' + ',' + '$2')
+    return x1 + x2
 
 module.exports = OverviewTab
